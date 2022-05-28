@@ -11,6 +11,7 @@ export class UserResolver {
       lastName: 'Doe',
       email: 'mail@mail.com',
       token: 'token',
+      hash: 'hash',
     };
   }
 }

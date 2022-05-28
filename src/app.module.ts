@@ -4,9 +4,12 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { UserResolver } from './user/user.resolver';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/schema.gql',
@@ -16,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     UserModule,
     AuthModule,
+    PrismaModule,
   ],
   providers: [UserResolver],
 })

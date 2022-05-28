@@ -2,24 +2,30 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input LoginType {
-  email: String!
-  password: String!
-}
-
 type Mutation {
-  login(input: LoginType!): UserType!
-  register(input: RegisterType!): UserType!
+  signIn(
+    """Log in"""
+    input: SignInType!
+  ): UserType!
+  signUp(
+    """Creates a new user"""
+    input: SignUpType!
+  ): UserType!
 }
 
 type Query {
   me: UserType!
 }
 
-input RegisterType {
+input SignInType {
+  email: String!
+  password: String!
+}
+
+input SignUpType {
   email: String!
   firstName: String!
-  lastName: String!
+  lastName: String
   password: String!
 }
 
@@ -27,6 +33,6 @@ type UserType {
   email: String!
   firstName: String!
   id: ID!
-  lastName: String!
+  lastName: String
   token: String!
 }

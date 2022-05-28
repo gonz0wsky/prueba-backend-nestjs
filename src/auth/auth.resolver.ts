@@ -1,34 +1,28 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { UserType } from 'src/user/models/user.model';
-import { LoginType, RegisterType } from './models/auth.models';
+import { AuthService } from './auth.service';
+import { SignInType, SignUpType } from './models/auth.models';
 
-@Resolver()
+@Resolver('Auth')
 export class AuthResolver {
+  constructor(private authService: AuthService) {}
+
   @Mutation(() => UserType)
-  async login(
-    @Args({ name: 'input', type: () => LoginType }) input: LoginType,
+  async signUp(
+    @Args('input', {
+      type: () => SignUpType,
+      description: 'Creates a new user',
+    })
+    input: SignUpType,
   ): Promise<UserType> {
-    const { email } = input;
-    return {
-      id: '1',
-      firstName: 'John',
-      lastName: 'Doe',
-      email,
-      token: 'token',
-    };
+    return this.authService.signUp(input);
   }
 
   @Mutation(() => UserType)
-  async register(
-    @Args({ name: 'input', type: () => RegisterType }) input: RegisterType,
+  async signIn(
+    @Args('input', { type: () => SignInType, description: 'Log in' })
+    input: SignInType,
   ): Promise<UserType> {
-    const { email, firstName, lastName } = input;
-    return {
-      id: '1',
-      firstName,
-      lastName,
-      email,
-      token: 'token',
-    };
+    return this.authService.signIn(input);
   }
 }
