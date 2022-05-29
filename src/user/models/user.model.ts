@@ -19,4 +19,10 @@ export class UserType implements UserModel {
 
   @HideField()
   hash: string;
+
+  @HideField()
+  createdAt: Date;
+
+  @HideField()
+  updatedAt: Date;
 }

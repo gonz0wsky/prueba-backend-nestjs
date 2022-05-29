@@ -12,6 +12,8 @@ export class UserResolver {
       email: 'mail@mail.com',
       token: 'token',
       hash: 'hash',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
   }
 }
