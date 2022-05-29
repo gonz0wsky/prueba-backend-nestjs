@@ -1,8 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Query, Resolver } from '@nestjs/graphql';
-import { User } from '@prisma/client';
-import { GetUser } from 'src/auth/decorator';
-import { GqlAuthGuard } from 'src/auth/guard';
+import { GetUser, GqlAuthGuard } from 'src/common';
 import { UserType } from './models/user.model';
 
 @Resolver()
