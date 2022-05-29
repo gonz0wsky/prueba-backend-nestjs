@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { CommonModule } from './common/common.module';
+import { APP_GUARD } from '@nestjs/core';
+import { GqlAuthGuard } from './common';
 
 @Module({
   imports: [
@@ -23,6 +25,12 @@ import { CommonModule } from './common/common.module';
     PrismaModule,
     CommonModule,
   ],
-  providers: [UserResolver],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: GqlAuthGuard,
+    },
+    UserResolver,
+  ],
 })
 export class AppModule {}

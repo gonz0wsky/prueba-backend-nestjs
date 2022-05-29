@@ -1,4 +1,5 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Public } from 'src/common';
 import { UserType } from 'src/user/models/user.model';
 import { AuthService } from './auth.service';
 import { SignInType, SignUpType } from './models/auth.models';
@@ -8,6 +9,7 @@ export class AuthResolver {
   constructor(private authService: AuthService) {}
 
   @Mutation(() => UserType)
+  @Public()
   async signUp(
     @Args('input', {
       type: () => SignUpType,
@@ -19,6 +21,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => UserType)
+  @Public()
   async signIn(
     @Args('input', { type: () => SignInType, description: 'Log in' })
     input: SignInType,
