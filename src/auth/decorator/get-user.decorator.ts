@@ -1,15 +1,14 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { UserType } from 'src/user/models/user.model';
 
 export const GetUser = createParamDecorator(
-  (data: string | undefined, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
-
-    // Return data from the request object
-    // @GetUser("data") user: User
-    if (data) {
-      return request.user[data];
-    }
-
-    return request.user;
+  (_, context: ExecutionContext): UserType => {
+    const ctx = GqlExecutionContext.create(context);
+    const user = ctx.getContext().req.user;
+    const token = ctx
+      .getContext()
+      .req.headers.authorization.replace('Bearer ', '');
+    return { ...user, token };
   },
 );
