@@ -1,0 +1,7 @@
+overwrite: true
+schema: "src/schema.gql"
+documents: "tempgql/**/*.gql"
+generates:
+  src/schema-nodes.ts:
+    plugins:
+      - "typescript-document-nodes"

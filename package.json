@@ -10,7 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "rm -rf dist && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -23,7 +23,8 @@
     "prisma:dev:deploy": "yarn prisma migrate deploy",
     "db:dev:rm": "docker compose rm db-dev -s -f -v",
     "db:dev:up": "docker compose up db-dev -d",
-    "db:dev:restart": "yarn db:dev:rm && yarn db:dev:up && sleep 1 && yarn prisma:dev:deploy"
+    "db:dev:restart": "yarn db:dev:rm && yarn db:dev:up && sleep 1 && yarn prisma:dev:deploy",
+    "gen:test:nodes": "sh ./gen-schema-nodes.sh"
   },
   "dependencies": {
     "@devoxa/prisma-relay-cursor-connection": "^2.2.1",
@@ -50,6 +51,8 @@
     "rxjs": "^7.2.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "2.6.2",
+    "@graphql-codegen/typescript-document-nodes": "^2.2.11",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
@@ -65,6 +68,7 @@
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "gql-generator": "^1.0.17",
     "jest": "27.0.6",
     "prettier": "^2.3.2",
     "prisma": "^3.14.0",
