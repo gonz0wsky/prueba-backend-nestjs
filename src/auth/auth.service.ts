@@ -5,12 +5,15 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserType } from 'src/user/models/user.model';
 import {
   ChangePasswordType,
+  RequestResetPassowrdType,
+  ResetPasswordType,
   SignInType,
   SignUpType,
 } from './models/auth.models';
@@ -35,6 +38,12 @@ export class AuthService {
     });
 
     return token;
+  }
+
+  async getUserByEmail(email: string): Promise<User> {
+    return this.prisma.user.findUnique({
+      where: { email },
+    });
   }
 
   async signUp(dto: SignUpType): Promise<UserType> {
@@ -62,9 +71,7 @@ export class AuthService {
 
   async signIn(dto: SignInType): Promise<UserType> {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { email: dto.email },
-      });
+      const user = await this.getUserByEmail(dto.email);
 
       if (!user) throw new UnauthorizedException('Invalid credentials');
 
@@ -85,9 +92,7 @@ export class AuthService {
     user: UserType,
   ): Promise<boolean> {
     try {
-      const userdb = await this.prisma.user.findUnique({
-        where: { email: user.email },
-      });
+      const userdb = await this.getUserByEmail(user.email);
 
       if (!userdb) throw new UnauthorizedException('User not found');
 
@@ -105,6 +110,51 @@ export class AuthService {
       return true;
     } catch (error) {
       return false;
+    }
+  }
+
+  async requestResetPassword(dto: RequestResetPassowrdType): Promise<string> {
+    try {
+      const user = await this.getUserByEmail(dto.email);
+
+      if (!user) throw new UnauthorizedException('User not found');
+
+      const token = await this.signToken(user.id, user.email);
+
+      // This should be sent to the user's email
+      return token;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async resetPassword(dto: ResetPasswordType): Promise<boolean> {
+    try {
+      const decoded = this.jwt.decode(dto.token);
+
+      const expirationDate = new Date(decoded['exp'] * 1000);
+
+      if (expirationDate < new Date())
+        throw new UnauthorizedException('Token expired');
+
+      const id = decoded['sub'];
+      const email = decoded['email'];
+
+      const user = await this.getUserByEmail(email);
+
+      if (!user || user.id !== id)
+        throw new UnauthorizedException('User not found');
+
+      const newHash = await argon.hash(dto.password);
+
+      await this.prisma.user.update({
+        data: { hash: newHash },
+        where: { id },
+      });
+
+      return true;
+    } catch (error) {
+      return error;
     }
   }
 }

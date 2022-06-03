@@ -12,6 +12,14 @@ type Mutation {
     """Change user password"""
     input: ChangePasswordType!
   ): Boolean!
+  requestResetPassword(
+    """Request password reset"""
+    input: RequestResetPassowrdType!
+  ): String!
+  resetPassword(
+    """Reset password"""
+    input: ResetPasswordType!
+  ): Boolean!
   signIn(
     """Log in"""
     input: SignInType!
@@ -24,6 +32,15 @@ type Mutation {
 
 type Query {
   me: UserType!
+}
+
+input RequestResetPassowrdType {
+  email: String!
+}
+
+input ResetPasswordType {
+  password: String!
+  token: String!
 }
 
 input SignInType {

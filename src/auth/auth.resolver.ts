@@ -4,6 +4,8 @@ import { UserType } from 'src/user/models/user.model';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordType,
+  RequestResetPassowrdType,
+  ResetPasswordType,
   SignInType,
   SignUpType,
 } from './models/auth.models';
@@ -43,5 +45,29 @@ export class AuthResolver {
     @GetUser() user: UserType,
   ): Promise<boolean> {
     return this.authService.changePassword(input, user);
+  }
+
+  @Mutation(() => String)
+  @Public()
+  async requestResetPassword(
+    @Args('input', {
+      type: () => RequestResetPassowrdType,
+      description: 'Request password reset',
+    })
+    input: RequestResetPassowrdType,
+  ): Promise<string> {
+    return this.authService.requestResetPassword(input);
+  }
+
+  @Mutation(() => Boolean)
+  @Public()
+  async resetPassword(
+    @Args('input', {
+      type: () => ResetPasswordType,
+      description: 'Reset password',
+    })
+    input: ResetPasswordType,
+  ): Promise<boolean> {
+    return this.authService.resetPassword(input);
   }
 }

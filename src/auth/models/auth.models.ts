@@ -49,3 +49,24 @@ export class ChangePasswordType {
   @IsNotEmpty()
   newPassword: string;
 }
+
+@InputType()
+export class RequestResetPassowrdType {
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+}
+
+@InputType()
+export class ResetPasswordType {
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  token: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
