@@ -2,7 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ChangePasswordType {
+  currentPassword: String!
+  newPassword: String!
+}
+
 type Mutation {
+  changePassword(
+    """Change user password"""
+    input: ChangePasswordType!
+  ): Boolean!
   signIn(
     """Log in"""
     input: SignInType!

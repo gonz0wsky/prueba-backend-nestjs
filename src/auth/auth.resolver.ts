@@ -1,8 +1,12 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { Public } from 'src/common';
+import { GetUser, Public } from 'src/common';
 import { UserType } from 'src/user/models/user.model';
 import { AuthService } from './auth.service';
-import { SignInType, SignUpType } from './models/auth.models';
+import {
+  ChangePasswordType,
+  SignInType,
+  SignUpType,
+} from './models/auth.models';
 
 @Resolver('Auth')
 export class AuthResolver {
@@ -27,5 +31,17 @@ export class AuthResolver {
     input: SignInType,
   ): Promise<UserType> {
     return this.authService.signIn(input);
+  }
+
+  @Mutation(() => Boolean)
+  async changePassword(
+    @Args('input', {
+      type: () => ChangePasswordType,
+      description: 'Change user password',
+    })
+    input: ChangePasswordType,
+    @GetUser() user: UserType,
+  ): Promise<boolean> {
+    return this.authService.changePassword(input, user);
   }
 }

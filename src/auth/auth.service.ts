@@ -9,7 +9,11 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserType } from 'src/user/models/user.model';
-import { SignInType, SignUpType } from './models/auth.models';
+import {
+  ChangePasswordType,
+  SignInType,
+  SignUpType,
+} from './models/auth.models';
 
 @Injectable()
 export class AuthService {
@@ -62,21 +66,45 @@ export class AuthService {
         where: { email: dto.email },
       });
 
-      if (!user) {
-        throw new UnauthorizedException('Invalid credentials');
-      }
+      if (!user) throw new UnauthorizedException('Invalid credentials');
 
       const valid = await argon.verify(user.hash, dto.password);
 
-      if (!valid) {
-        throw new UnauthorizedException('Invalid credentials');
-      }
+      if (!valid) throw new UnauthorizedException('Invalid credentials');
 
       const token = await this.signToken(user.id, user.email);
 
       return { ...user, token };
     } catch (error) {
       throw error;
+    }
+  }
+
+  async changePassword(
+    dto: ChangePasswordType,
+    user: UserType,
+  ): Promise<boolean> {
+    try {
+      const userdb = await this.prisma.user.findUnique({
+        where: { email: user.email },
+      });
+
+      if (!userdb) throw new UnauthorizedException('User not found');
+
+      const valid = await argon.verify(userdb.hash, dto.currentPassword);
+
+      if (!valid) throw new UnauthorizedException('Invalid credentials');
+
+      const newHash = await argon.hash(dto.newPassword);
+
+      await this.prisma.user.update({
+        data: { hash: newHash },
+        where: { id: userdb.id },
+      });
+
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 }

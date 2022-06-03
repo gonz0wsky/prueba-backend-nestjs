@@ -36,3 +36,16 @@ export class SignUpType {
   @IsString()
   lastName?: string;
 }
+
+@InputType()
+export class ChangePasswordType {
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  currentPassword: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  newPassword: string;
+}
