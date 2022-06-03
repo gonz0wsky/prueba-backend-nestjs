@@ -1,11 +1,18 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 @InputType()
 export class SignInType {
   @Field()
   @IsEmail()
   @IsNotEmpty()
+  @MaxLength(50)
   email: string;
 
   @Field()
@@ -19,6 +26,7 @@ export class SignUpType {
   @Field()
   @IsEmail()
   @IsNotEmpty()
+  @MaxLength(50)
   email: string;
 
   @Field()
@@ -29,11 +37,13 @@ export class SignUpType {
   @Field()
   @IsString()
   @IsNotEmpty()
+  @MaxLength(30)
   firstName: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
+  @MaxLength(30)
   lastName?: string;
 }
 
@@ -55,6 +65,7 @@ export class RequestResetPassowrdType {
   @Field()
   @IsString()
   @IsNotEmpty()
+  @MaxLength(50)
   email: string;
 }
 
