@@ -1,6 +1,6 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { GetUser, Public } from 'src/common';
-import { UserType } from 'src/user/models/user.model';
+import { UserType } from 'src/user/models/user.models';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordType,

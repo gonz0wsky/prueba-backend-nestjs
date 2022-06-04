@@ -7,11 +7,33 @@ input ChangePasswordType {
   newPassword: String!
 }
 
+input CreateIdeaType {
+  content: String!
+  visibility: IdeaVisibilityType!
+}
+
+type IdeaType {
+  authorId: String!
+  content: String!
+  id: ID!
+  visibility: IdeaVisibilityType!
+}
+
+enum IdeaVisibilityType {
+  PRIVATE
+  PROTECTED
+  PUBLIC
+}
+
 type Mutation {
   changePassword(
     """Change user password"""
     input: ChangePasswordType!
   ): Boolean!
+  createIdea(
+    """Creates a new idea"""
+    input: CreateIdeaType!
+  ): IdeaType!
   requestResetPassword(
     """Request password reset"""
     input: RequestResetPassowrdType!

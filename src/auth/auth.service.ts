@@ -9,7 +9,7 @@ import { User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserType } from 'src/user/models/user.model';
+import { UserType } from 'src/user/models/user.models';
 import {
   ChangePasswordType,
   RequestResetPassowrdType,

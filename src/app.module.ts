@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CommonModule } from './common/common.module';
 import { APP_GUARD } from '@nestjs/core';
 import { GqlAuthGuard } from './common';
+import { IdeaModule } from './idea/idea.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { GqlAuthGuard } from './common';
     AuthModule,
     PrismaModule,
     CommonModule,
+    IdeaModule,
   ],
   providers: [
     {
