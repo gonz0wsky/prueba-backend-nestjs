@@ -50,6 +50,10 @@ type Mutation {
     """Creates a new user"""
     input: SignUpType!
   ): UserType!
+  updateIdea(
+    """Updates an idea"""
+    input: UpdateIdeaType!
+  ): IdeaType!
 }
 
 type Query {
@@ -75,6 +79,12 @@ input SignUpType {
   firstName: String!
   lastName: String
   password: String!
+}
+
+input UpdateIdeaType {
+  content: String
+  id: ID!
+  visibility: IdeaVisibilityType
 }
 
 type UserType {

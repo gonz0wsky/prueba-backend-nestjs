@@ -7,7 +7,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { Idea as IdeaModel, IdeaVisibility } from '@prisma/client';
-import { IsNotEmpty, IsString, IsEnum } from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsOptional } from 'class-validator';
 
 registerEnumType(IdeaVisibility, {
   name: 'IdeaVisibilityType',
@@ -45,4 +45,22 @@ export class CreateIdeaType {
   @IsEnum(IdeaVisibility)
   @IsNotEmpty()
   visibility: IdeaVisibility;
+}
+
+@InputType()
+export class UpdateIdeaType {
+  @Field(() => ID)
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  content?: string;
+
+  @Field(() => IdeaVisibility, { nullable: true })
+  @IsEnum(IdeaVisibility)
+  @IsOptional()
+  visibility?: IdeaVisibility;
 }

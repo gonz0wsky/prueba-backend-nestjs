@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserType } from 'src/user/models/user.models';
-import { CreateIdeaType, IdeaType } from './models/idea.models';
+import { CreateIdeaType, IdeaType, UpdateIdeaType } from './models/idea.models';
 
 @Injectable()
 export class IdeaService {
@@ -19,6 +23,27 @@ export class IdeaService {
         },
       });
       return idea;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateIdea(input: UpdateIdeaType, user: UserType): Promise<IdeaType> {
+    try {
+      const idea = await this.prisma.idea.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!idea) throw new ForbiddenException('Idea not found');
+      if (idea.authorId !== user.id)
+        throw new UnauthorizedException('You cannot update this idea');
+
+      const updatedIdea = await this.prisma.idea.update({
+        where: { id: input.id },
+        data: input,
+      });
+
+      return updatedIdea;
     } catch (error) {
       throw error;
     }
