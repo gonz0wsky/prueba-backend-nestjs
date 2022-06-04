@@ -14,6 +14,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserType } from 'src/user/models/user.models';
 import {
   CreateIdeaType,
+  DeleteIdeaType,
   IdeaType,
   ListIdeaType,
   UpdateIdeaType,
@@ -81,6 +82,26 @@ export class IdeaService {
       return updatedIdea;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async deleteIdea(input: DeleteIdeaType, user: UserType): Promise<boolean> {
+    try {
+      const idea = await this.prisma.idea.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!idea) throw new ForbiddenException('Idea not found');
+      if (idea.authorId !== user.id)
+        throw new UnauthorizedException('You cannot delete this idea');
+
+      await this.prisma.idea.delete({
+        where: { id: input.id },
+      });
+
+      return true;
+    } catch (error) {
+      return error;
     }
   }
 }

@@ -94,3 +94,11 @@ export class UpdateIdeaType {
   @IsOptional()
   visibility?: IdeaVisibility;
 }
+
+@InputType()
+export class DeleteIdeaType {
+  @Field(() => ID)
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+}

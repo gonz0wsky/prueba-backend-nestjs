@@ -8,6 +8,7 @@ import { IdeaService } from './idea.service';
 import { IdeaConnection } from './models/idea.connection';
 import {
   CreateIdeaType,
+  DeleteIdeaType,
   IdeaType,
   ListIdeaType,
   UpdateIdeaType,
@@ -53,5 +54,17 @@ export class IdeaResolver {
     @GetUser() user: UserType,
   ): Promise<IdeaType> {
     return this.ideaService.updateIdea(input, user);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteIdea(
+    @Args('input', {
+      type: () => DeleteIdeaType,
+      description: 'Updates an idea',
+    })
+    input: DeleteIdeaType,
+    @GetUser() user: UserType,
+  ): Promise<boolean> {
+    return this.ideaService.deleteIdea(input, user);
   }
 }
