@@ -12,17 +12,41 @@ input CreateIdeaType {
   visibility: IdeaVisibilityType!
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type IdeaConnection {
+  edges: [IdeaTypeEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Float!
+}
+
 type IdeaType {
   authorId: String!
   content: String!
+  createdAt: DateTime!
   id: ID!
   visibility: IdeaVisibilityType!
+}
+
+type IdeaTypeEdge {
+  cursor: String!
+  node: IdeaType!
 }
 
 enum IdeaVisibilityType {
   PRIVATE
   PROTECTED
   PUBLIC
+}
+
+input ListIdeaType {
+  after: ID
+  before: ID
+  first: Float
+  last: Float
 }
 
 type Mutation {
@@ -56,7 +80,18 @@ type Mutation {
   ): IdeaType!
 }
 
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
 type Query {
+  listIdeas(
+    """List user ideas"""
+    input: ListIdeaType!
+  ): IdeaConnection!
   me: UserType!
 }
 

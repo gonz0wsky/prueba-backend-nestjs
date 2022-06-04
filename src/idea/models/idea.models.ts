@@ -1,3 +1,4 @@
+import { ConnectionArguments } from '@devoxa/prisma-relay-cursor-connection';
 import {
   Field,
   HideField,
@@ -7,7 +8,13 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { Idea as IdeaModel, IdeaVisibility } from '@prisma/client';
-import { IsNotEmpty, IsString, IsEnum, IsOptional } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsEnum,
+  IsOptional,
+  IsNumber,
+} from 'class-validator';
 
 registerEnumType(IdeaVisibility, {
   name: 'IdeaVisibilityType',
@@ -27,11 +34,34 @@ export class IdeaType implements IdeaModel {
   @Field(() => IdeaVisibility)
   visibility: IdeaVisibility;
 
-  @HideField()
+  @Field()
   createdAt: Date;
 
   @HideField()
   updatedAt: Date;
+}
+
+@InputType()
+export class ListIdeaType implements ConnectionArguments {
+  @Field(() => ID, { nullable: true })
+  @IsString()
+  @IsOptional()
+  after?: string;
+
+  @Field({ nullable: true })
+  @IsNumber()
+  @IsOptional()
+  first?: number;
+
+  @Field(() => ID, { nullable: true })
+  @IsString()
+  @IsOptional()
+  before?: string;
+
+  @Field({ nullable: true })
+  @IsNumber()
+  @IsOptional()
+  last?: number;
 }
 
 @InputType()
