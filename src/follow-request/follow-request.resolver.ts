@@ -1,17 +1,39 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Connection, Edge } from '@devoxa/prisma-relay-cursor-connection';
+import { Args, Info, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { FollowRequest } from '@prisma/client';
+import { GraphQLResolveInfo } from 'graphql';
 import { GetUser } from 'src/common';
 import { UserType } from 'src/user/models/user.models';
 import { FollowRequestService } from './follow-request.service';
+import { FollowRequestConnection } from './models/follow-request.connections';
 import {
   AcceptFollowRequestType,
   CreateFollowRequestType,
-  FollowRequestType,
+  ListFollowRequestsType,
   RejectFollowRequestType,
 } from './models/follow-request.models';
 
 @Resolver('FollowRequest')
 export class FollowRequestResolver {
   constructor(private followRequestService: FollowRequestService) {}
+
+  @Query(() => FollowRequestConnection)
+  async listFollowRequests(
+    @Args('input', {
+      type: () => ListFollowRequestsType,
+      description: 'List user follow requests',
+    })
+    input: ListFollowRequestsType,
+    @GetUser()
+    user: UserType,
+    @Info() resolveInfo: GraphQLResolveInfo,
+  ): Promise<Connection<FollowRequest, Edge<FollowRequest>>> {
+    return this.followRequestService.listFollowRequests(
+      input,
+      user,
+      resolveInfo,
+    );
+  }
 
   @Mutation(() => Boolean)
   async sendFollowRequest(

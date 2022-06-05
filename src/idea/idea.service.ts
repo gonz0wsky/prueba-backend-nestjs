@@ -1,8 +1,4 @@
-import {
-  Connection,
-  Edge,
-  findManyCursorConnection,
-} from '@devoxa/prisma-relay-cursor-connection';
+import { Connection, Edge } from '@devoxa/prisma-relay-cursor-connection';
 import {
   ForbiddenException,
   Injectable,
@@ -30,7 +26,7 @@ export class IdeaService {
     resolveInfo: GraphQLResolveInfo,
   ): Promise<Connection<Idea, Edge<Idea>>> {
     try {
-      const ideas = await findManyCursorConnection(
+      const ideas = await this.prisma.findManyCursorConnection(
         (args) =>
           this.prisma.idea.findMany({
             ...args,

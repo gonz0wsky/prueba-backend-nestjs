@@ -29,6 +29,25 @@ input DeleteIdeaType {
   id: ID!
 }
 
+type FollowRequestConnection {
+  edges: [FollowRequestTypeEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Float!
+}
+
+type FollowRequestType {
+  from: UserType!
+  fromId: ID!
+  id: ID!
+  to: UserType!
+  toId: ID!
+}
+
+type FollowRequestTypeEdge {
+  cursor: String!
+  node: FollowRequestType!
+}
+
 type IdeaConnection {
   edges: [IdeaTypeEdge!]!
   pageInfo: PageInfo!
@@ -52,6 +71,13 @@ enum IdeaVisibilityType {
   PRIVATE
   PROTECTED
   PUBLIC
+}
+
+input ListFollowRequestsType {
+  after: ID
+  before: ID
+  first: Float
+  last: Float
 }
 
 input ListIdeaType {
@@ -116,6 +142,10 @@ type PageInfo {
 }
 
 type Query {
+  listFollowRequests(
+    """List user follow requests"""
+    input: ListFollowRequestsType!
+  ): FollowRequestConnection!
   listIdeas(
     """List user ideas"""
     input: ListIdeaType!

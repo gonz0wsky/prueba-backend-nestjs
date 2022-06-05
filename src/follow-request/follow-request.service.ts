@@ -1,14 +1,45 @@
+import { Connection, Edge } from '@devoxa/prisma-relay-cursor-connection';
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { FollowRequest } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { GraphQLResolveInfo } from 'graphql';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserType } from 'src/user/models/user.models';
+import { ListFollowRequestsType } from './models/follow-request.models';
 
 @Injectable()
 export class FollowRequestService {
   constructor(private prisma: PrismaService) {}
 
+  async listFollowRequests(
+    input: ListFollowRequestsType,
+    user: UserType,
+    resolveInfo: GraphQLResolveInfo,
+  ): Promise<Connection<FollowRequest, Edge<FollowRequest>>> {
+    try {
+      const followRequests = await this.prisma.findManyCursorConnection(
+        (args) =>
+          this.prisma.followRequest.findMany({
+            ...args,
+            where: { toId: user.id },
+            orderBy: { createdAt: 'desc' },
+            include: { from: true, to: true },
+          }),
+        () => this.prisma.followRequest.count({ where: { toId: user.id } }),
+        input,
+        { resolveInfo },
+      );
+      return followRequests;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async createFollowRequest(id: string, user: UserType): Promise<boolean> {
     try {
+      if (user.id === id)
+        throw new ForbiddenException('You can not follow yourself');
+
       const userToFollow = await this.prisma.user.findUnique({
         where: { id },
       });

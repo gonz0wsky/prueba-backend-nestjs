@@ -5,7 +5,7 @@ import { GraphQLResolveInfo } from 'graphql';
 import { GetUser } from 'src/common';
 import { UserType } from 'src/user/models/user.models';
 import { IdeaService } from './idea.service';
-import { IdeaConnection } from './models/idea.connection';
+import { IdeaConnection } from './models/idea.connections';
 import {
   CreateIdeaType,
   DeleteIdeaType,
