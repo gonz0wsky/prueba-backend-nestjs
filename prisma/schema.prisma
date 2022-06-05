@@ -11,14 +11,18 @@ datasource db {
 }
 
 model User {
-  id    String  @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  email String  @unique @db.VarChar(50)
-  firstName String @db.VarChar(30)
-  lastName String? @db.VarChar(30)
-  hash String
-  ideas Idea[]
+  id               String          @id @default(uuid())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  email            String          @unique @db.VarChar(50)
+  firstName        String          @db.VarChar(30)
+  lastName         String?         @db.VarChar(30)
+  hash             String
+  ideas            Idea[]
+  followRequests   FollowRequest[] @relation("FollowRequest")
+  followerRequests FollowRequest[] @relation("FollowerRequest")
+  following        Follower[]      @relation("Following")
+  followers        Follower[]      @relation("Follower")
 }
 
 enum IdeaVisibility {
@@ -28,11 +32,31 @@ enum IdeaVisibility {
 }
 
 model Idea {
-  id    String  @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  content String
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  String
+  id         String         @id @default(uuid())
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  content    String
+  author     User           @relation(fields: [authorId], references: [id])
+  authorId   String
   visibility IdeaVisibility
+}
+
+model FollowRequest {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  fromId    String
+  toId      String
+  from      User     @relation(name: "FollowRequest", fields: [fromId], references: [id])
+  to        User     @relation(name: "FollowerRequest", fields: [toId], references: [id])
+}
+
+model Follower {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  fromId    String
+  toId      String
+  from      User     @relation(name: "Following", fields: [fromId], references: [id])
+  to        User     @relation(name: "Follower", fields: [toId], references: [id])
 }
