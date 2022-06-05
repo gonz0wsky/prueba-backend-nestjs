@@ -48,6 +48,25 @@ type FollowRequestTypeEdge {
   node: FollowRequestType!
 }
 
+type FollowerConnection {
+  edges: [FollowerTypeEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Float!
+}
+
+type FollowerType {
+  from: UserType!
+  fromId: ID!
+  id: ID!
+  to: UserType!
+  toId: ID!
+}
+
+type FollowerTypeEdge {
+  cursor: String!
+  node: FollowerType!
+}
+
 type IdeaConnection {
   edges: [IdeaTypeEdge!]!
   pageInfo: PageInfo!
@@ -74,6 +93,13 @@ enum IdeaVisibilityType {
 }
 
 input ListFollowRequestsType {
+  after: ID
+  before: ID
+  first: Float
+  last: Float
+}
+
+input ListFollowerType {
   after: ID
   before: ID
   first: Float
@@ -146,6 +172,14 @@ type Query {
     """List user follow requests"""
     input: ListFollowRequestsType!
   ): FollowRequestConnection!
+  listFollowers(
+    """List followers"""
+    input: ListFollowerType!
+  ): FollowerConnection!
+  listFollowing(
+    """List following"""
+    input: ListFollowerType!
+  ): FollowerConnection!
   listIdeas(
     """List user ideas"""
     input: ListIdeaType!

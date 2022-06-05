@@ -11,6 +11,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { GqlAuthGuard } from './common';
 import { IdeaModule } from './idea/idea.module';
 import { FollowRequestModule } from './follow-request/follow-request.module';
+import { FollowerModule } from './follower/follower.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { FollowRequestModule } from './follow-request/follow-request.module';
     CommonModule,
     IdeaModule,
     FollowRequestModule,
+    FollowerModule,
   ],
   providers: [
     {
