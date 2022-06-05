@@ -34,3 +34,19 @@ export class CreateFollowRequestType {
   @IsNotEmpty()
   id: string;
 }
+
+@InputType()
+export class AcceptFollowRequestType {
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+}
+
+@InputType()
+export class RejectFollowRequestType {
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+}

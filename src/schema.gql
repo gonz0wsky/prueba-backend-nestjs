@@ -2,6 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AcceptFollowRequestType {
+  id: String!
+}
+
 input ChangePasswordType {
   currentPassword: String!
   newPassword: String!
@@ -58,6 +62,10 @@ input ListIdeaType {
 }
 
 type Mutation {
+  acceptFollowRequest(
+    """Accept a follow request"""
+    input: AcceptFollowRequestType!
+  ): Boolean!
   changePassword(
     """Change user password"""
     input: ChangePasswordType!
@@ -69,6 +77,10 @@ type Mutation {
   deleteIdea(
     """Updates an idea"""
     input: DeleteIdeaType!
+  ): Boolean!
+  rejectFollowRequest(
+    """Reject a follow request"""
+    input: RejectFollowRequestType!
   ): Boolean!
   requestResetPassword(
     """Request password reset"""
@@ -109,6 +121,10 @@ type Query {
     input: ListIdeaType!
   ): IdeaConnection!
   me: UserType!
+}
+
+input RejectFollowRequestType {
+  id: String!
 }
 
 input RequestResetPassowrdType {

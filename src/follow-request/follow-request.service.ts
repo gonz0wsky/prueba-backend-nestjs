@@ -1,4 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserType } from 'src/user/models/user.models';
 
@@ -43,6 +44,64 @@ export class FollowRequestService {
 
       return true;
     } catch (error) {
+      throw error;
+    }
+  }
+
+  async acceptFollowRequest(id: string, user: UserType): Promise<boolean> {
+    try {
+      const followRequests = await this.prisma.followRequest.findMany({
+        where: {
+          id: id,
+          toId: user.id,
+        },
+      });
+
+      const followRequest = followRequests[0];
+
+      if (!followRequest)
+        throw new ForbiddenException('Follow request not found');
+
+      const deleteFollowRequest = this.prisma.followRequest.delete({
+        where: { id },
+      });
+
+      const createFollower = this.prisma.follower.create({
+        data: {
+          fromId: followRequest.fromId,
+          toId: followRequest.toId,
+        },
+      });
+
+      await this.prisma.$transaction([deleteFollowRequest, createFollower]);
+
+      return true;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new ForbiddenException('Follow request not found');
+        }
+      }
+      throw error;
+    }
+  }
+
+  async rejectFollowRequest(id: string, user: UserType): Promise<boolean> {
+    try {
+      await this.prisma.followRequest.deleteMany({
+        where: {
+          id,
+          fromId: user.id,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new ForbiddenException('Follow request not found');
+        }
+      }
       throw error;
     }
   }
