@@ -2,7 +2,14 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as pactum from 'pactum';
 import { print } from 'graphql';
-import { Me, SignIn, SignUp } from 'src/schema-nodes';
+import {
+  ChangePassword,
+  Me,
+  RequestResetPassword,
+  ResetPassword,
+  SignIn,
+  SignUp,
+} from 'src/schema-nodes';
 import { AppModule } from 'src/app.module';
 
 describe('App e2e', () => {
@@ -284,6 +291,199 @@ describe('App e2e', () => {
             },
           })
           .stores('userThreeToken', 'data.signIn.token');
+      });
+    });
+
+    describe('Change password', () => {
+      it(`Should throw if currentPassword is empty`, () => {
+        return pactum
+          .spec()
+          .post('/graphql')
+          .withHeaders({
+            Authorization: 'Bearer $S{userOneToken}',
+          })
+          .withGraphQLQuery(print(ChangePassword))
+          .withGraphQLVariables({
+            input: {
+              newPassword: userOne.password,
+            },
+          })
+          .expectJsonLike({
+            errors: [
+              {
+                extensions: {
+                  code: 'BAD_USER_INPUT',
+                },
+              },
+            ],
+          });
+      });
+
+      it(`Should throw if newPassrod is empty`, () => {
+        return pactum
+          .spec()
+          .post('/graphql')
+          .withHeaders({
+            Authorization: 'Bearer $S{userOneToken}',
+          })
+          .withGraphQLQuery(print(ChangePassword))
+          .withGraphQLVariables({
+            input: {
+              newPassword: userOne.password,
+            },
+          })
+          .expectJsonLike({
+            errors: [
+              {
+                extensions: {
+                  code: 'BAD_USER_INPUT',
+                },
+              },
+            ],
+          });
+      });
+
+      it(`Should fail if wrong password ${userOne.firstName} ${userOne.lastName} user`, () => {
+        return pactum
+          .spec()
+          .post('/graphql')
+          .withHeaders({
+            Authorization: 'Bearer $S{userOneToken}',
+          })
+          .withGraphQLQuery(print(ChangePassword))
+          .withGraphQLVariables({
+            input: {
+              currentPassword: 'bad_password',
+              newPassword: userOne.password,
+            },
+          })
+          .expectJsonLike({
+            errors: [
+              {
+                message: 'Invalid credentials',
+              },
+            ],
+          });
+      });
+
+      it(`Change password to ${userOne.firstName} ${userOne.lastName} user`, () => {
+        return pactum
+          .spec()
+          .post('/graphql')
+          .withHeaders({
+            Authorization: 'Bearer $S{userOneToken}',
+          })
+          .withGraphQLQuery(print(ChangePassword))
+          .withGraphQLVariables({
+            input: {
+              currentPassword: userOne.password,
+              newPassword: userOne.password,
+            },
+          })
+          .expectJsonLike({
+            data: {
+              changePassword: true,
+            },
+          });
+      });
+    });
+
+    describe('Reset password', () => {
+      it(`Should throw if email is empty`, () => {
+        return pactum
+          .spec()
+          .post('/graphql')
+          .withGraphQLQuery(print(RequestResetPassword))
+          .withGraphQLVariables({
+            input: {},
+          })
+          .expectJsonLike({
+            errors: [
+              {
+                extensions: {
+                  code: 'BAD_USER_INPUT',
+                },
+              },
+            ],
+          });
+      });
+
+      it(`Request reset password ${userOne.firstName} ${userOne.lastName} user`, () => {
+        return pactum
+          .spec()
+          .post('/graphql')
+          .withGraphQLQuery(print(RequestResetPassword))
+          .withGraphQLVariables({
+            input: {
+              email: userOne.email,
+            },
+          })
+          .expectJsonLike({
+            data: {
+              requestResetPassword: "typeof $V === 'string'",
+            },
+          })
+          .stores('userOneResetPasswordToken', 'data.requestResetPassword');
+      });
+
+      it(`Should throw if token is empty`, () => {
+        return pactum
+          .spec()
+          .post('/graphql')
+          .withGraphQLQuery(print(ResetPassword))
+          .withGraphQLVariables({
+            input: {
+              password: userOne.password,
+            },
+          })
+          .expectJsonLike({
+            errors: [
+              {
+                extensions: {
+                  code: 'BAD_USER_INPUT',
+                },
+              },
+            ],
+          });
+      });
+
+      it(`Should throw if password is empty`, () => {
+        return pactum
+          .spec()
+          .post('/graphql')
+          .withGraphQLQuery(print(ResetPassword))
+          .withGraphQLVariables({
+            input: {
+              token: '$S{userOneResetPasswordToken}',
+            },
+          })
+          .expectJsonLike({
+            errors: [
+              {
+                extensions: {
+                  code: 'BAD_USER_INPUT',
+                },
+              },
+            ],
+          });
+      });
+
+      it(`Reset password ${userOne.firstName} ${userOne.lastName} user`, () => {
+        return pactum
+          .spec()
+          .post('/graphql')
+          .withGraphQLQuery(print(ResetPassword))
+          .withGraphQLVariables({
+            input: {
+              token: '$S{userOneResetPasswordToken}',
+              password: userOne.password,
+            },
+          })
+          .expectJsonLike({
+            data: {
+              resetPassword: true,
+            },
+          });
       });
     });
   });
